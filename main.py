@@ -34,10 +34,14 @@ def main():
 	#a1 = Account.Account("rhutton", "pizza")
 	#a1.login("pizza")
 	#save_account(a1)
-	a2 = load_account("rhutton")
-	print(a2.username)
-	a2.login("pizza")
-	print(a2.password)
+	#a2 = load_account("rhutton")
+	#print(a2.username)
+	#a2.login("pizza")
+	#print(a2.password)
+	initialize()
+	a = load_account("vhugosd")
+	a.login("tequila")
+	print(a.sites)
 
 
 if __name__ == "__main__":
