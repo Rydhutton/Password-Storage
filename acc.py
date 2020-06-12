@@ -14,6 +14,10 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 # https://cryptography.io/en/latest/fernet/#using-passwords-with-fernet
 
 
+# TO DO
+# Store keys separate from object files using some hashing method
+
+
 
 class Account:
 	def __init__(self, username, password):
