@@ -16,7 +16,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 # TO DO
 # Store keys separate from object files using some hashing method
-
+# Add SQL Lite database for storing passwords
 
 
 class Account:
@@ -71,7 +71,7 @@ class Account:
 
 	def logout(self):
 		if self.authenticated == True:
-			self.enc()
+			#self.enc()
 			self.authenticated = False
 			print("You have been logged out")
 
