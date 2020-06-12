@@ -20,6 +20,10 @@ class Account:
 		self.username = username
 		self.password = password.encode('utf_8')
 		self.salt = os.urandom(16)
+		#print(self.password)
+		#self.salt = self.salt.encode('utf_8')
+		self.password = self.password + self.salt
+		#print(self.password)
 		self.key = Fernet.generate_key()
 		#self.cipher = Fernet(self.key)
 		self.sites = {}
@@ -32,12 +36,13 @@ class Account:
 		#will need to encrypt all info besides username and key
 		cipher = Fernet(self.key)
 		self.password = cipher.encrypt(self.password)
+		#print(self.password)
 
 
 
 	def dec(self):
 		cipher = Fernet(self.key)
-		self.password = cipher.decrypt(self.password)
+		#self.password = cipher.decrypt(self.password)
 
 
 
@@ -45,8 +50,12 @@ class Account:
 		pwd = pwd.encode('utf_8')
 		if self.authenticated == False:
 			cipher = Fernet(self.key)
+			#print(pwd)
+			pwd = pwd + self.salt
+			#print(pwd)
 			if cipher.decrypt(self.password) == pwd:
-				self.password = cipher.decrypt(self.password)
+			#if cipher.decrypt(self.password) == pwd:
+				#self.password = cipher.decrypt(self.password)
 				self.authenticated = True
 				print("authenticated, welcome.")
 			else:
