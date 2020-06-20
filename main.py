@@ -8,14 +8,14 @@ from tkinter import *
 
 def save_account(account):
 	#consider saving a new file for each account?
-	print(account.password)
+	#print(account.password)
 	if account.authenticated == True:
 		account.logout()
 	userfile = account.username + ".obj"
 	file = open(userfile, 'wb')
 	pickle.dump(account, file)
 	file.close()
-	print(account.password)
+	#print(account.password)
 
 
 def load_account(account_name):
@@ -49,27 +49,55 @@ def gui():
 
 	root = Tk()
 
+	root.geometry("170x250")
 	root.title("Account Manager")
 
 	def login_click():
+		#login = True
 		#attempt to login here
 		#login_label = Label(root, text="success")
 		#login_label.pack()
+		# while login is tru run loop
+		# only things that can be done are add sites
+		# view sites or logout which saves account
+		# and sets flag false
+
+		top = Toplevel()
+
 		acc = load_account(acc_entry.get())
 		pwd = pwd_entry.get()
 		acc.login(pwd)
-		login_info_label = Label(root, text="Success")
-		login_info_label.grid(row=1, column=4)
-		count = 1
-		for site in acc.sites:
-			acinfo = site + " | pwd: " + acc.sites[site]
-			info_label = Label(root, text=acinfo)
-			info_label.grid(row=count, column=1, padx=0)
-			count += 1
-		#logged_in = True
-		#active_acc = acc
-		#info_label = Label(root, text=acc.sites)
-		#info_label.grid(row=1, column=1)
+
+		if acc.authenticated == True:
+			top.title(acc.username)
+			login_info_label = Label(top, text="Successfully Authenticated")
+			login_info_label.grid(row=0, column=0)
+			count = 1
+			for site in acc.sites:
+				acinfo = site + " | pwd: " + acc.sites[site]
+				info_label = Label(top, text=acinfo)
+				info_label.grid(row=count, column=0, padx=0)
+				count += 1
+			#logged_in = True
+			#active_acc = acc
+			#info_label = Label(root, text=acc.sites)
+			#info_label.grid(row=1, column=1)
+
+			def add_site_click():
+				pass
+
+			add_site_label = Label(top, text="Add Site:")
+			website_entry = Entry(top, width=25, borderwidth=5)
+			web_pwd_entry = Entry(top, width=25, borderwidth=5)
+			add_site_button = Button(top, text="Add Site", command=add_site_click, fg="black", bg="gray")
+			add_site_label.grid(row=0, column=1)
+			website_entry.grid(row=1, column=1, pady=2, padx=5)
+			web_pwd_entry.grid(row=2,column=1, pady=2, padx=5)
+			add_site_button.grid(row=3, column=1, pady=2)
+		else:
+			top.title("Incorrect Password")
+			login_info_label = Label(top, text="Incorrect Password")
+			login_info_label.grid(row=0, column=0, padx=5, pady=5)
 
 	def logout_click():
 		#active_acc.logout()
@@ -77,50 +105,71 @@ def gui():
 		pass
 
 	def create_acc_click():
-		usrname = ac_creation_entry.get()
-		pwd = pw_creation_entry.get()
-		acc = Account.Account(usrname, pwd)
-		save_account(acc)
 
-	def add_site_click():
-		pass
+		top = Toplevel()
+		top.title("New Account")
+
+		ac_creation_label = Label(top, text="Create a new account: ")
+		ac_creation_entry = Entry(top, width=25, borderwidth=5)
+		pw_creation_entry = Entry(top, width=25, borderwidth=5)
+
+		ac_creation_label.grid(row=1, column=0, pady=2)
+		ac_creation_entry.grid(row=2, column=0, pady=2)
+		pw_creation_entry.grid(row=3, column=0, pady=2)
+
+		def new_acc_click():
+			usrname = ac_creation_entry.get()
+			pwd = pw_creation_entry.get()
+			acc = Account.Account(usrname, pwd)
+			save_account(acc)
+			top.destroy()
+
+		new_acc_button = Button(top, text="Create account", command=new_acc_click, fg="black", bg="gray")
+
+		new_acc_button.grid(row=4, column=0, pady=10)
+
+		top.mainloop()
+
 
 	acc_label = Label(root, text="Account")
 	acc_entry = Entry(root, width=25, borderwidth=5)
 	pwd_label = Label(root, text="Password")
 	pwd_entry = Entry(root, width=25, borderwidth=5)
-	add_site_label = Label(root, text="Add Site:")
-	website_entry = Entry(root, width=25, borderwidth=5)
-	web_pwd_entry = Entry(root, width=25, borderwidth=5)
+	#add_site_label = Label(root, text="Add Site:")
+	#website_entry = Entry(root, width=25, borderwidth=5)
+	#web_pwd_entry = Entry(root, width=25, borderwidth=5)
 	sites_label = Label(root, text="Sites")
 
-	ac_creation_label = Label(root, text="Create a new account: ")
-	ac_creation_entry = Entry(root, width=25, borderwidth=5)
-	pw_creation_entry = Entry(root, width=25, borderwidth=5)
+	spacer_1 = Label(root)
+
+	#ac_creation_label = Label(root, text="Create a new account: ")
+	#ac_creation_entry = Entry(root, width=25, borderwidth=5)
+	#pw_creation_entry = Entry(root, width=25, borderwidth=5)
 
 	login_button = Button(root, text="Login", command=login_click, fg="black", bg="gray")
 	logout_button = Button(root, text="Logout", command=logout_click, fg="black", bg="gray")
 	create_acc_button = Button(root, text="Create account", command=create_acc_click, fg="black", bg="gray")
-	add_site_button = Button(root, text="Add Site", command=add_site_click, fg="black", bg="gray")
+	#add_site_button = Button(root, text="Add Site", command=add_site_click, fg="black", bg="gray")
 
-	acc_label.grid(row=0, column=0)
-	acc_entry.grid(row=0, column=1)
-	pwd_label.grid(row=0, column=2)
-	add_site_label.grid(row=4, column=3)
-	website_entry.grid(row=5, column=3,pady=2)
-	web_pwd_entry.grid(row=6,column=3,pady=2)
-	pwd_entry.grid(row=0, column=3)
-	sites_label.grid(row=1, column=0)
+	spacer_1.grid(row=0, column=0)
+	acc_label.grid(row=1, column=0,pady=2)
+	acc_entry.grid(row=2, column=0, padx=5, pady=2)
+	pwd_label.grid(row=3, column=0, pady=2)
+	#add_site_label.grid(row=4, column=3)
+	#website_entry.grid(row=5, column=3,pady=2)
+	#web_pwd_entry.grid(row=6,column=3,pady=2)
+	pwd_entry.grid(row=4, column=0, padx=5, pady=2)
+	#sites_label.grid(row=1, column=0)
 
-	login_button.grid(row=0, column=4)
-	logout_button.grid(row=2, column=4)
-	add_site_button.grid(row=7, column=3, pady=2)
+	login_button.grid(row=5, column=0, pady=10)
+	#logout_button.grid(row=2, column=4)
+	#add_site_button.grid(row=7, column=3, pady=2)
 
-	ac_creation_label.grid(row=4, column=4)
-	ac_creation_entry.grid(row=5, column=4)
-	pw_creation_entry.grid(row=6, column=4)
+	#ac_creation_label.grid(row=4, column=4)
+	#ac_creation_entry.grid(row=5, column=4)
+	#pw_creation_entry.grid(row=6, column=4)
 
-	create_acc_button.grid(row=7, column=4)
+	create_acc_button.grid(row=6, column=0, pady=15)
 
 	root.mainloop()
 
