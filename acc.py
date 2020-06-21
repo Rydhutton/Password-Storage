@@ -16,7 +16,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 # TO DO
 # Store keys separate from object files using some hashing method
-# Add SQL Lite database for storing passwords
+# Add SQL Lite database for storing hash key pairs
 
 
 class Account:
@@ -24,43 +24,38 @@ class Account:
 		self.username = username
 		self.password = password.encode('utf_8')
 		self.salt = os.urandom(16)
-		#print(self.password)
-		#self.salt = self.salt.encode('utf_8')
 		self.password = self.password + self.salt
-		#print(self.password)
 		self.key = Fernet.generate_key()
-		#self.cipher = Fernet(self.key)
 		self.sites = {}
 		self.authenticated = False
-		self.enc()
-
-
-
-	def enc(self):
-		#will need to encrypt all info besides username and key
 		cipher = Fernet(self.key)
 		self.password = cipher.encrypt(self.password)
-		#print(self.password)
 
 
 
-	def dec(self):
-		cipher = Fernet(self.key)
-		#self.password = cipher.decrypt(self.password)
-
+	def enc(self, cipher):
+		# TO DO
+		# Salt website passwords
+		if self.authenticated == False:
+			for key in self.sites:
+				pwd = self.sites[key]
+				pwd = pwd.encode('utf_8')
+				self.sites[key] = cipher.encrypt(pwd)
+		elif self.authenticated == True:
+			for key in self.sites:
+				pwd = self.sites[key]
+				pwd = cipher.decrypt(pwd)
+				self.sites[key] = pwd.decode('utf_8')
 
 
 	def login(self, pwd):
 		pwd = pwd.encode('utf_8')
 		if self.authenticated == False:
 			cipher = Fernet(self.key)
-			#print(pwd)
 			pwd = pwd + self.salt
-			#print(pwd)
 			if cipher.decrypt(self.password) == pwd:
-			#if cipher.decrypt(self.password) == pwd:
-				#self.password = cipher.decrypt(self.password)
 				self.authenticated = True
+				self.enc(cipher)
 				print("authenticated, welcome.")
 			else:
 				print("incorrect password")
@@ -68,13 +63,11 @@ class Account:
 			print("you have already authenticated")
 
 
-
 	def logout(self):
 		if self.authenticated == True:
-			#self.enc()
 			self.authenticated = False
+			self.enc(Fernet(self.key))
 			print("You have been logged out")
-
 
 
 	def addSite(self, website, password):
@@ -82,7 +75,6 @@ class Account:
 			print("Please login before adding a new site")
 		else:
 			self.sites[website] = password
-
 
 
 	def search(self, keyword):
