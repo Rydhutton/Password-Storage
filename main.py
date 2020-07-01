@@ -4,6 +4,8 @@ import base64
 import pickle
 import time
 from tkinter import *
+import sqlite3
+from sqlite3 import Error
 
 
 def save_account(account):
@@ -30,6 +32,29 @@ def initialize():
 		print(x, end="", flush=True)
 		time.sleep(0.05)
 	print("")
+
+
+def sql_init():
+	db_con = sqlite3.connect('user.db')
+	db = db_con.cursor()
+	db.execute("""CREATE TABLE users (
+		id text,
+		key text
+		)""")
+
+
+def sql_user_cypher(username):
+	di = {'a':'01','b':'02','c':'03','d':'04','e':'05','f':'06','g':'07','h':'08','i':'09','j':'10',
+			'k':'11','l':'12','m':'13','n':'14','o':'15','p':'16','q':'17','r':'18','s':'19','t':'20',
+			'u':'21','v':'22','w':'23','x':'24','y':'25','z':'26'}
+	uid = ""
+	for char in username:
+		uid.append(di[char])
+	return uid
+
+
+def sql_add_user(account):
+	pass
 
 
 def gui():
@@ -79,6 +104,7 @@ def gui():
 				website = website_entry.get()
 				website_pwd = web_pwd_entry.get()
 				acc.addSite(website, website_pwd)
+				# save account should be when user logs out
 				save_account(acc)
 
 			add_site_button = Button(top, text="Add Site", command=add_site_click, fg="black", bg="gray")

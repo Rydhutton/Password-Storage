@@ -85,3 +85,7 @@ class Account:
 				print(self.sites[keyword])
 			except:
 				print("no match found")
+
+
+	def hash(self):
+		pass
