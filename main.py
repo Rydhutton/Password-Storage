@@ -8,30 +8,9 @@ import sqlite3
 from sqlite3 import Error
 
 
-def save_account(account):
-	#consider saving a new file for each account?
-	if account.authenticated == True:
-		account.logout()
-	userfile = account.username + ".obj"
-	file = open(userfile, 'wb')
-	pickle.dump(account, file)
-	file.close()
+# Note to Ryan in the future who will need to debug this update:
 
-
-def load_account(account_name):
-	userfile = account_name + ".obj"
-	file = open(userfile, 'rb')
-	accounts = pickle.load(file)
-	file.close()
-	return accounts
-
-
-def initialize():
-	msg = ["*"] * 25
-	for x in msg:
-		print(x, end="", flush=True)
-		time.sleep(0.05)
-	print("")
+# I'm sorry...
 
 
 def sql_init():
@@ -41,9 +20,12 @@ def sql_init():
 		id text,
 		key text
 		)""")
+	db_con.commit()
+	db_con.close()
 
 
 def sql_user_cypher(username):
+	# this can be changed to whatever the end user wishes, no repetition tho.
 	di = {'a':'01','b':'02','c':'03','d':'04','e':'05','f':'06','g':'07','h':'08','i':'09','j':'10',
 			'k':'11','l':'12','m':'13','n':'14','o':'15','p':'16','q':'17','r':'18','s':'19','t':'20',
 			'u':'21','v':'22','w':'23','x':'24','y':'25','z':'26'}
@@ -54,7 +36,58 @@ def sql_user_cypher(username):
 
 
 def sql_add_user(account):
-	pass
+	db_con = sqlite3.connect('user.db')
+	db = db_con.cursor()
+	uid = sql_user_cypher(account.username)
+	db.execute("INSERT INTO users VALUES (?, ?)", (uid, account.key))
+	db_con.commit()
+	db_con.close()
+
+
+def sql_load_user(uid):
+	db_con = sqlite3.connect('user.db')
+	db - db_con.cursor()
+	db.execute("SELECT * FROM users WHERE id=?", (uid))
+	id_key = db.fetchall()
+	return id_key[1]
+
+
+def save_account(account):
+	#consider saving a new file for each account?
+	#need try block here
+	sql_add_user(account)
+	if account.authenticated == True:
+		account.logout(account.key)
+
+	#delete key from account object before saving
+	#delattr(account, key)
+	#use bunch to add later? complex... instead:
+
+	account.key = None
+
+	userfile = account.username + ".obj"
+	file = open(userfile, 'wb')
+	pickle.dump(account, file)
+	file.close()
+
+
+def load_account(account_name):
+	userfile = account_name + ".obj"
+	file = open(userfile, 'rb')
+	account = pickle.load(file)
+	file.close()
+	user_id = sql_user_cypher(account_name)
+	key = sql_load_user(user_id)
+	account.key = key
+	return account
+
+
+def initialize():
+	msg = ["*"] * 25
+	for x in msg:
+		print(x, end="", flush=True)
+		time.sleep(0.05)
+	print("")
 
 
 def gui():
@@ -173,7 +206,7 @@ def gui():
 	root.mainloop()
 
 def main():
-	
+	'''
 	a = Account.Account("jsmith", "password")
 	a.login("password")
 	a.addSite("facebook", "password1")
@@ -188,6 +221,12 @@ def main():
 	#save_account(a)
 	#print(a.password)
 	#a.login("password")
+	'''
+
+	a = load_account("test")
+	a.login("test")
+	sql_add_user(a)
+
 
 if __name__ == "__main__":
-	gui()
+	main()

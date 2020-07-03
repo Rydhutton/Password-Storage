@@ -17,6 +17,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 # TO DO
 # Store keys separate from object files using some hashing method
 # Add SQL Lite database for storing hash key pairs
+# Remove key from object class and read from db when loading account
 
 
 class Account:
@@ -48,10 +49,10 @@ class Account:
 				self.sites[key] = pwd.decode('utf_8')
 
 
-	def login(self, pwd):
+	def login(self, pwd, key):
 		pwd = pwd.encode('utf_8')
 		if self.authenticated == False:
-			cipher = Fernet(self.key)
+			cipher = Fernet(key)
 			pwd = pwd + self.salt
 			if cipher.decrypt(self.password) == pwd:
 				self.authenticated = True
@@ -63,10 +64,10 @@ class Account:
 			print("you have already authenticated")
 
 
-	def logout(self):
+	def logout(self, key):
 		if self.authenticated == True:
 			self.authenticated = False
-			self.enc(Fernet(self.key))
+			self.enc(Fernet(key))
 			print("You have been logged out")
 
 
