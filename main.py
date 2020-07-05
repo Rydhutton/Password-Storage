@@ -8,11 +8,6 @@ import sqlite3
 from sqlite3 import Error
 
 
-# Note to Ryan in the future who will need to debug this update:
-
-# I'm sorry...
-
-
 def sql_init():
 	db_con = sqlite3.connect('user.db')
 	db = db_con.cursor()
@@ -31,7 +26,7 @@ def sql_user_cypher(username):
 			'u':'21','v':'22','w':'23','x':'24','y':'25','z':'26'}
 	uid = ""
 	for char in username:
-		uid.append(di[char])
+		uid += di[char]
 	return uid
 
 
@@ -46,22 +41,17 @@ def sql_add_user(account):
 
 def sql_load_user(uid):
 	db_con = sqlite3.connect('user.db')
-	db - db_con.cursor()
-	db.execute("SELECT * FROM users WHERE id=?", (uid))
+	db = db_con.cursor()
+	db.execute("SELECT * FROM users WHERE id=?", (uid,))
 	id_key = db.fetchall()
-	return id_key[1]
+	db_con.close()
+	return id_key[0][1]
 
 
 def save_account(account):
-	#consider saving a new file for each account?
-	#need try block here
 	sql_add_user(account)
 	if account.authenticated == True:
 		account.logout(account.key)
-
-	#delete key from account object before saving
-	#delattr(account, key)
-	#use bunch to add later? complex... instead:
 
 	account.key = None
 
@@ -91,7 +81,6 @@ def initialize():
 
 
 def gui():
-
 	#TO DO
 	#Fill out try/except statements for incorrect logins/usernames
 	#Implement logout
@@ -121,10 +110,6 @@ def gui():
 				info_label = Label(top, text=acinfo)
 				info_label.grid(row=count, column=0, padx=0)
 				count += 1
-			#logged_in = True
-			#active_acc = acc
-			#info_label = Label(root, text=acc.sites)
-			#info_label.grid(row=1, column=1)
 
 			add_site_label = Label(top, text="Add Site:")
 			website_entry = Entry(top, width=25, borderwidth=5)
@@ -206,26 +191,9 @@ def gui():
 	root.mainloop()
 
 def main():
-	'''
-	a = Account.Account("jsmith", "password")
-	a.login("password")
-	a.addSite("facebook", "password1")
-	a.addSite("gmail", "password2")
-	a.addSite("instagram", "password3")
-	a.addSite("youtube", "password4")
-	a.logout()
-	print(a.password)
-	print(a.sites)
-	a.login("password")
-	print(a.sites)
-	#save_account(a)
-	#print(a.password)
-	#a.login("password")
-	'''
 
-	a = load_account("test")
-	a.login("test")
-	sql_add_user(a)
+	# used for debugging functions.
+	pass
 
 
 if __name__ == "__main__":

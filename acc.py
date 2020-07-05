@@ -6,19 +6,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-
-# 2 options
-# 1 - we create a superclass "database" that manages all accounts and does the pickling for us
-# 2 - we create all the functions within our main.py that pickles and handles all accounts
-
 # https://cryptography.io/en/latest/fernet/#using-passwords-with-fernet
-
-
-# TO DO
-# Store keys separate from object files using some hashing method
-# Add SQL Lite database for storing hash key pairs
-# Remove key from object class and read from db when loading account
-
 
 class Account:
 	def __init__(self, username, password):
@@ -86,7 +74,3 @@ class Account:
 				print(self.sites[keyword])
 			except:
 				print("no match found")
-
-
-	def hash(self):
-		pass
