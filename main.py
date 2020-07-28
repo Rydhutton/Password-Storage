@@ -98,7 +98,7 @@ def gui():
 
 		acc = load_account(acc_entry.get())
 		pwd = pwd_entry.get()
-		acc.login(pwd)
+		acc.login(pwd, acc.key)
 
 		if acc.authenticated == True:
 			top.title(acc.username)
@@ -197,4 +197,4 @@ def main():
 
 
 if __name__ == "__main__":
-	main()
+	gui()
